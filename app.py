@@ -23,7 +23,7 @@ def web():
         <html>
             <body>
                 <h1>web-сервер на flask</h1>
-                <a href="/authot">author</a>
+                <a href="/authoк">author</a>
             </body>
         </html>"""
 
@@ -45,7 +45,7 @@ def author():
 
 @app.route('/image') 
 def image():
-    path = url_for("static", filename="oak.jpg")
+    path = url_for("static", filename="oak.jpeg")
     return '''
 <!doctype html>
 <html>
