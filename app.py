@@ -60,10 +60,10 @@ def image():
 <!doctype html>
 <html>
     <head>
-        <link rel="stylesheet" href="{css_path}">
+        <link rel="stylesheet" href="''' + url_for('static', filename='lab1.css') +'''">
     </head>
     <body>
-        <h1>Дy6</h1>
+        <h1>Дyб</h1>
         <img src="''' + path + '''">
     </body>
 </html>
