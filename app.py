@@ -549,7 +549,7 @@ def flowers_list():
     return render_template('flowers.html', flowers=flower_list)
 
 @app.route('/lab2/del_flower/<int:flower_id>')
-def del_flower(flower_id):  # ИЗМЕНИТЕ ИМЯ ФУНКЦИИ НА del_flower
+def del_flower(flower_id):  
     if flower_id >= len(flower_list):
         abort(404)
     flower_list.pop(flower_id)
