@@ -667,3 +667,110 @@ books = [
 @app.route('/lab2/books/')
 def books_list():
     return render_template('books.html', books=books)
+
+cats = [
+    {
+        'name': 'Британская короткошёрстная',
+        'image': 'british.jpg',
+        'description': 'Спокойная и аристократичная порода с плюшевой шерстью'
+    },
+    {
+        'name': 'Мейн-кун',
+        'image': 'maine_coon.jpg',
+        'description': 'Крупная порода с кисточками на ушах и дружелюбным характером'
+    },
+    {
+        'name': 'Сиамская',
+        'image': 'siamese.jpg',
+        'description': 'Элегантная и разговорчивая порода с ярко-голубыми глазами'
+    },
+    {
+        'name': 'Сфинкс',
+        'image': 'sphynx.jpg',
+        'description': 'Бесшёрстная порода с морщинистой кожей и тёплым телом'
+    },
+    {
+        'name': 'Персидская',
+        'image': 'persian.jpg',
+        'description': 'Длинношёрстная порода с приплюснутой мордочкой'
+    },
+    {
+        'name': 'Шотландская вислоухая',
+        'image': 'scottish_fold.jpg',
+        'description': 'Порода с загнутыми вперёд ушами и круглыми глазами'
+    },
+    {
+        'name': 'Бенгальская',
+        'image': 'bengal.jpg',
+        'description': 'Порода с леопардовым окрасом и активным характером'
+    },
+    {
+        'name': 'Русская голубая',
+        'image': 'russian_blue.jpg',
+        'description': 'Элегантная порода с серебристо-голубой шерстью и зелёными глазами'
+    },
+    {
+        'name': 'Норвежская лесная',
+        'image': 'norwegian_forest.jpg',
+        'description': 'Крупная порода с густой водонепроницаемой шерстью'
+    },
+    {
+        'name': 'Ориентальная',
+        'image': 'oriental.jpg',
+        'description': 'Стройная порода с большими ушами и грациозным телом'
+    },
+    {
+        'name': 'Рэгдолл',
+        'image': 'ragdoll.jpg',
+        'description': 'Крупная порода, которая расслабляется на руках как тряпичная кукла'
+    },
+    {
+        'name': 'Абиссинская',
+        'image': 'abyssinian.jpg',
+        'description': 'Древняя порода с тикированным окрасом и активным нравом'
+    },
+    {
+        'name': 'Бирманская',
+        'image': 'birman.jpg',
+        'description': 'Порода с белыми "носочками" на лапах и шелковистой шерстью'
+    },
+    {
+        'name': 'Турецкий ван',
+        'image': 'turkish_van.jpg',
+        'description': 'Порода, любящая воду, с характерным красно-белым окрасом'
+    },
+    {
+        'name': 'Сибирская',
+        'image': 'siberian.jpg',
+        'description': 'Русская порода с гипоаллергенной шерстью и мощным телом'
+    },
+    {
+        'name': 'Корниш-рекс',
+        'image': 'cornish_rex.jpg',
+        'description': 'Порода с волнистой шерстью и стройным телом'
+    },
+    {
+        'name': 'Девон-рекс',
+        'image': 'devon_rex.jpg',
+        'description': 'Порода с большими ушами и волнистой шерстью, похожая на эльфа'
+    },
+    {
+        'name': 'Тонкинская',
+        'image': 'tonkinese.jpg',
+        'description': 'Гибрид сиамской и бурманской пород с аквамариновыми глазами'
+    },
+    {
+        'name': 'Бурманская',
+        'image': 'burmese.jpg',
+        'description': 'Порода с шелковистой шерстью и выразительными золотыми глазами'
+    },
+    {
+        'name': 'Египетская мау',
+        'image': 'egyptian_mau.jpg',
+        'description': 'Древняя порода с пятнистым окрасом и зелёными глазами'
+    }
+]
+
+@app.route('/lab2/cats/')
+def cats_list():
+    return render_template('cats.html', cats=cats)
