@@ -22,7 +22,7 @@ flower_list = [
 ]
 @lab2.route('/lab2/flowers/')
 def flowers_list():
-    return render_template('flowers.html', flowers=flower_list)
+    return render_template('lab2/flowers.html', flowers=flower_list)
 
 
 @lab2.route('/lab2/del_flower/<int:flower_id>')
@@ -85,20 +85,20 @@ def example():
         {'name': 'мандарины', 'price': 95},
         {'name': 'манго', 'price': 321},
     ]
-    return render_template('example.html', 
+    return render_template('lab2/example.html', 
                            name=name, number=number, group=group, 
                            course=course, fruits=fruits)
 
 
 @lab2.route('/lab2/')
 def lab22():
-    return render_template('lab2.html')
+    return render_template('lab2/lab2.html')
 
 
 @lab2.route('/lab2/filters')
 def filters():
     phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
-    return render_template('filter.html', phrase = phrase)
+    return render_template('lab2/filter.html', phrase = phrase)
 
 
 @lab2.route('/lab2/calc/<int:a>/<int:b>')
@@ -145,7 +145,7 @@ books = [
 ]
 @lab2.route('/lab2/books/')
 def books_list():
-    return render_template('books.html', books=books)
+    return render_template('lab2/books.html', books=books)
 
 
 cats = [
@@ -252,4 +252,4 @@ cats = [
 ]
 @lab2.route('/lab2/cats/')
 def cats_list():
-    return render_template('cats.html', cats=cats)
+    return render_template('lab2/cats.html', cats=cats)
