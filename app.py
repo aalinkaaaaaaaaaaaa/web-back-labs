@@ -1,5 +1,7 @@
 from flask import Flask, url_for, request
+import os
 import datetime
+from dotenv import load_dotenv
 from lab1 import lab1
 from lab2 import lab2
 from lab3 import lab3
@@ -8,7 +10,10 @@ from lab5 import lab5
 
 app = Flask(__name__)
 
-app.secret_key = 'секретно-секретный секрет'
+load_dotenv()
+
+app.secret_key = os.getenv('SECRET_KEY', 'default-secret-key')
+app.config['DB_TYPE'] = os.getenv('DB_TYPE', 'postgres')
 
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
@@ -347,11 +352,13 @@ def internal_server_error(err):
 </html>''', 500
 
 
-@app.route("/server_error")
+@app.route('/server_error')
 def cause_server_error():
-    # Вызываем ошибку делением на ноль
-    result = 1 / 0
-    return "Эта строка никогда не будет выполнена"
+    try:
+        result = 1 / 0
+        return f"Result: {result}"
+    except ZeroDivisionError:
+        return "Error: Division by zero", 500
 
 @app.route("/")
 @app.route("/index")
