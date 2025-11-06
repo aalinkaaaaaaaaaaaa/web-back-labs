@@ -13,7 +13,7 @@ app = Flask(__name__)
 load_dotenv()
 
 app.secret_key = os.getenv('SECRET_KEY', 'default-secret-key')
-app.config['DB_TYPE'] = os.getenv('DB_TYPE', 'postgres')
+app.config['DB_TYPE'] = os.getenv('DB_TYPE', 'sqlite')
 
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
