@@ -2,6 +2,7 @@ from flask import Flask, url_for, request
 import os
 import datetime
 from dotenv import load_dotenv
+from models import db, Office
 from lab1 import lab1
 from lab2 import lab2
 from lab3 import lab3
@@ -16,6 +17,11 @@ load_dotenv()
 app.secret_key = os.getenv('SECRET_KEY', 'default-secret-key')
 app.config['DB_TYPE'] = os.getenv('DB_TYPE', 'sqlite')
 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///offices.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db.init_app(app)
+
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
 app.register_blueprint(lab3)
@@ -23,6 +29,23 @@ app.register_blueprint(lab4)
 app.register_blueprint(lab5)
 app.register_blueprint(lab6)
 access_log = []
+
+
+with app.app_context():
+    db.create_all()
+
+    if Office.query.count() == 0:
+        offices_data = []
+        for i in range(1, 11):
+            offices_data.append(Office(
+                number=i,
+                tenant='',
+                price=900 + i % 3 * 100
+            ))
+        
+        db.session.add_all(offices_data)
+        db.session.commit()
+        print("База данных инициализирована с офисами")
 
 
 @app.errorhandler(404)
