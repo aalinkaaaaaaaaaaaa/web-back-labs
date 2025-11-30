@@ -1,62 +1,44 @@
 from flask import Blueprint, render_template, request, jsonify
 from datetime import datetime
+import sqlite3
+from contextlib import closing
 
 lab7 = Blueprint('lab7', __name__)
 
-@lab7.route('/lab7/')
-def main():
-    return render_template('lab7/index.html')
 
-films = [
-    {
-        "title": "The Hangover",
-        "title_ru": "Мальчишник в Вегасе",
-        "year": "2009",
-        "description": "Они мечтали устроить незабываемый мальчишник в Вегасе. Но теперь им необходимо вспомнить, \
-            что именно произошло: что за ребенок сидит в шкафу номера отеля? Как в ванную попал тигр? Почему у одного \
-            из них нет зуба? И, самое главное, куда делся жених? То, что парни вытворяли на вечеринке, не идет ни в \
-            какое сравнение с тем, что им придется сделать на трезвую голову, когда они будут шаг за шагом \
-            восстанавливать события прошлой ночи."
-    },
-    {
-        "title": "Holidate",
-        "title_ru": "Пара на праздники",
-        "year": "2020",
-        "description": "Они не знакомы, но устали проводить праздники в одиночестве. Тогда эти двое решают \
-            поддерживать отношения круглый год. Только сердцу не прикажешь."
-    },
-    {
-        "title": "The Grinch",
-        "title_ru": "Гринч",
-        "year": "2018",
-        "description": "Любой бы на месте Гринча позеленел и взбесился. Как порядочный интроверт он живёт в тёмной \
-            пещере на самой вершине горы подальше ото всех, но эти «все» готовят грандиознейшее празднование нового \
-            года. Они шумят, всё украшают и дико бесят. Кто бы отказал себе в удовольствии испортить праздник? \
-            Гринч решает украсть Новый год."
-    },
-    {
-        "title": "F1",
-        "title_ru": "Формула 1",
-        "year": "2025",
-        "description": "В 1990-х Сонни Хейс был восходящей звездой «Формулы-1», но после серьёзной аварии ушёл из \
-            большого спорта. 30 лет спустя Сонни живёт в трейлере и зарабатывает участием в различных гонках и \
-            чемпионатах. Однажды к нему обращается старый друг Рубен Сервантес, тоже в прошлом гонщик, а ныне \
-            владелец гоночной команды-аутсайдера, с просьбой присоединиться к ним в качестве второго пилота \
-            и наставника для молодого многообещающего новичка."
-    },
-    {
-        "title": "Knives Out",
-        "title_ru": "Достать ножи",
-        "year": "2019",
-        "description": "На следующее утро после празднования 85-летия известного автора криминальных романов \
-            Харлана Тромби виновника торжества находят мёртвым. Налицо — явное самоубийство, но полиция по \
-            протоколу опрашивает всех присутствующих в особняке членов семьи, хотя, в этом деле больше \
-            заинтересован частный детектив Бенуа Блан. Тем же утром он получил конверт с наличными от \
-            неизвестного и заказ на расследование смерти Харлана. Не нужно быть опытным следователем, чтобы \
-            понять, что все приукрашивают свои отношения с почившим главой семейства, но Блану достаётся \
-            настоящий подарок — медсестра покойного, которая физически не выносит ложь."
-    },
-]
+def init_db():
+    with closing(sqlite3.connect('films.db')) as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS films (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                title_ru TEXT NOT NULL,
+                year INTEGER NOT NULL,
+                description TEXT NOT NULL
+            )
+        ''')
+        
+        cursor.execute("SELECT COUNT(*) FROM films")
+        if cursor.fetchone()[0] == 0:
+            initial_films = [
+                ("The Hangover", "Мальчишник в Вегасе", 2009, "Они мечтали устроить незабываемый мальчишник в Вегасе. Но теперь им необходимо вспомнить, что именно произошло: что за ребенок сидит в шкафу номера отеля? Как в ванную попал тигр? Почему у одного из них нет зуба? И, самое главное, куда делся жених? То, что парни вытворяли на вечеринке, не идет ни в какое сравнение с тем, что им придется сделать на трезвую голову, когда они будут шаг за шагом восстанавливать события прошлой ночи."),
+                ("Holidate", "Пара на праздники", 2020, "Они не знакомы, но устали проводить праздники в одиночестве. Тогда эти двое решают поддерживать отношения круглый год. Только сердцу не прикажешь."),
+                ("The Grinch", "Гринч", 2018, "Любой бы на месте Гринча позеленел и взбесился. Как порядочный интроверт он живёт в тёмной пещере на самой вершине горы подальше ото всех, но эти «все» готовят грандиознейшее празднование нового года. Они шумят, всё украшают и дико бесят. Кто бы отказал себе в удовольствии испортить праздник? Гринч решает украсть Новый год."),
+                ("F1", "Формула 1", 2025, "В 1990-х Сонни Хейс был восходящей звездой «Формулы-1», но после серьёзной аварии ушёл из большого спорта. 30 лет спустя Сонни живёт в трейлере и зарабатывает участием в различных гонках и чемпионатах. Однажды к нему обращается старый друг Рубен Сервантес, тоже в прошлом гонщик, а ныне владелец гоночной команды-аутсайдера, с просьбой присоединиться к ним в качестве второго пилота и наставника для молодого многообещающего новичка."),
+                ("Knives Out", "Достать ножи", 2019, "На следующее утро после празднования 85-летия известного автора криминальных романов Харлана Тромби виновника торжества находят мёртвым. Налицо — явное самоубийство, но полиция по протоколу опрашивает всех присутствующих в особняке членов семьи, хотя, в этом деле больше заинтересован частный детектив Бенуа Блан. Тем же утром он получил конверт с наличными от неизвестного и заказ на расследование смерти Харлана. Не нужно быть опытным следователем, чтобы понять, что все приукрашивают свои отношения с почивним главой семейства, но Блану достаётся настоящий подарок — медсестра покойного, которая физически не выносит ложь.")
+            ]
+            cursor.executemany(
+                "INSERT INTO films (title, title_ru, year, description) VALUES (?, ?, ?, ?)",
+                initial_films
+            )
+        conn.commit()
+init_db()
+
+def get_db_connection():
+    conn = sqlite3.connect('films.db')
+    conn.row_factory = sqlite3.Row
+    return conn
 
 
 def validate_film_data(film_data):
@@ -74,8 +56,8 @@ def validate_film_data(film_data):
     try:
         year = int(year_str)
         current_year = datetime.now().year
-        if year < 1895 or year > current_year:
-            errors['year'] = f'Год должен быть от 1895 до {current_year}'
+        if year < 1895 or year > current_year + 1:
+            errors['year'] = f'Год должен быть от 1895 до {current_year + 1}'
     except (ValueError, TypeError):
         errors['year'] = 'Год должен быть числом'
     
@@ -87,40 +69,81 @@ def validate_film_data(film_data):
     
     return errors
 
+@lab7.route('/lab7/')
+def main():
+    return render_template('lab7/index.html')
+
+
 @lab7.route('/lab7/rest-api/films/', methods=['GET'])
 def get_films():
-    return jsonify(films)
+    conn = get_db_connection()
+    films = conn.execute('SELECT * FROM films').fetchall()
+    conn.close()
+    
+    films_list = []
+    for film in films:
+        films_list.append({
+            'id': film['id'],
+            'title': film['title'],
+            'title_ru': film['title_ru'],
+            'year': film['year'],
+            'description': film['description']
+        })
+
+    return jsonify(films_list)
 
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])
 def get_films_by_id(id):
-    if id < 0 or id >= len(films):
+    conn = get_db_connection()
+    film = conn.execute('SELECT * FROM films WHERE id = ?', (id,)).fetchone()
+    conn.close()
+    
+    if film is None:
         return jsonify({"error": "Фильм не найден"}), 404
 
-    return jsonify(films[id])
+    return jsonify({
+        'id': film['id'],
+        'title': film['title'],
+        'title_ru': film['title_ru'],
+        'year': film['year'],
+        'description': film['description']
+    })
 
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['DELETE'])
 def del_film(id):
-    if id < 0 or id >= len(films):
+    conn = get_db_connection()
+    
+    film = conn.execute('SELECT * FROM films WHERE id = ?', (id,)).fetchone()
+    if film is None:
+        conn.close()
         return jsonify({"error": "Фильм не найден"}), 404
 
-    del films[id]
+    conn.execute('DELETE FROM films WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
     return '', 204
 
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])
 def put_film(id):
-    if id < 0 or id >= len(films):
+    conn = get_db_connection()
+    
+    film = conn.execute('SELECT * FROM films WHERE id = ?', (id,)).fetchone()
+    if film is None:
+        conn.close()
         return jsonify({"error": "Фильм не найден"}), 404
     
     film_data = request.get_json()
     
     if not film_data:
+        conn.close()
         return jsonify({"error": "Не предоставлены данные для обновления"}), 400
     
     errors = validate_film_data(film_data)
     if errors:
+        conn.close()
         return jsonify(errors), 400
     
     title = film_data.get('title', '').strip()
@@ -128,11 +151,22 @@ def put_film(id):
     if not title.strip() and title_ru.strip():
         film_data['title'] = title_ru
 
-    if 'description' not in film_data or not film_data['description'].strip():
-        return jsonify({'description': 'Заполните описание'}), 400
+    conn.execute(
+        'UPDATE films SET title = ?, title_ru = ?, year = ?, description = ? WHERE id = ?',
+        (film_data['title'], film_data['title_ru'], film_data['year'], film_data['description'], id)
+    )
+    conn.commit()
     
-    films[id] = film_data
-    return jsonify(films[id])
+    updated_film = conn.execute('SELECT * FROM films WHERE id = ?', (id,)).fetchone()
+    conn.close()
+    
+    return jsonify({
+        'id': updated_film['id'],
+        'title': updated_film['title'],
+        'title_ru': updated_film['title_ru'],
+        'year': updated_film['year'],
+        'description': updated_film['description']
+    })
 
 
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
@@ -151,10 +185,13 @@ def add_film():
     if not title.strip() and title_ru.strip():
         film_data['title'] = title_ru
         
-    if 'description' not in film_data or not film_data['description'].strip():
-        return jsonify({'description': 'Заполните описание'}), 400
-    
-    films.append(film_data)
-    
-    new_id = len(films) - 1
+    conn = get_db_connection()
+    cursor = conn.execute(
+        'INSERT INTO films (title, title_ru, year, description) VALUES (?, ?, ?, ?)',
+        (film_data['title'], film_data['title_ru'], film_data['year'], film_data['description'])
+    )
+    new_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+
     return jsonify({"id": new_id}), 201
