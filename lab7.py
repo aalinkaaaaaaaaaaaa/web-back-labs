@@ -84,15 +84,15 @@ def del_film(id):
 def put_film(id):
     if id < 0 or id >= len(films):
         return jsonify({"error": "Фильм не найден"}), 404
-    
+
     film_data = request.get_json()
-    
+
     if not film_data:
         return jsonify({"error": "Не предоставлены данные для обновления"}), 400
-    
+
     if film_data['description'] == '':
         return {'description': 'Заполните описание'}, 400
-    
+
     films[id] = film_data
     return jsonify(films[id])
 
@@ -100,15 +100,15 @@ def put_film(id):
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
 def add_film():
     film_data = request.get_json()
-    
+
     if not film_data:
         return jsonify({"error": "Не предоставлены данные фильма"}), 400
-    
+
 
     if film_data['description'] == '':
         return jsonify({'description': 'Заполните описание'}), 400
-    
+
     films.append(film_data)
-    
+
     new_id = len(films) - 1
     return jsonify({"id": new_id}), 201
