@@ -90,6 +90,9 @@ def put_film(id):
     if not film_data:
         return jsonify({"error": "Не предоставлены данные для обновления"}), 400
     
+    if film_data['description'] == '':
+        return {'description': 'Заполните описание'}, 400
+    
     films[id] = film_data
     return jsonify(films[id])
 
@@ -100,6 +103,10 @@ def add_film():
     
     if not film_data:
         return jsonify({"error": "Не предоставлены данные фильма"}), 400
+    
+
+    if film_data['description'] == '':
+        return jsonify({'description': 'Заполните описание'}), 400
     
     films.append(film_data)
     
