@@ -1,31 +1,43 @@
-import sys
-import os
+import sqlite3
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+conn = sqlite3.connect('alina_gevorkyan_orm.db')
+cursor = conn.cursor()
 
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+print("Создание таблиц в alina_gevorkyan_orm.db")
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///alina_gevorkyan_orm.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    login VARCHAR(30) NOT NULL UNIQUE,
+    password VARCHAR(162) NOT NULL,
+    real_name VARCHAR(100)
+)
+''')
 
-db = SQLAlchemy(app)
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS articles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    login_id INTEGER,
+    title VARCHAR(50) NOT NULL,
+    article_text TEXT NOT NULL,
+    is_favorite BOOLEAN,
+    is_public BOOLEAN,
+    likes INTEGER,
+    FOREIGN KEY(login_id) REFERENCES users (id)
+)
+''')
 
-class users(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    login = db.Column(db.String(30), nullable=False, unique=True)
-    password = db.Column(db.String(162), nullable=False)
+conn.commit()
 
-class articles(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    login_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    title = db.Column(db.String(50), nullable=False)
-    article_text = db.Column(db.Text, nullable=False)
-    is_favorite = db.Column(db.Boolean)
-    is_public = db.Column(db.Integer)
+cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+tables = cursor.fetchall()
 
-with app.app_context():
-    db.create_all()
-    print("Таблицы созданы успешно!")
-    print("База данных: alina_gevorkyan_orm.db")
+print("\nСозданы таблицы:")
+for table in tables:
+    print(f"  - {table[0]}")
+    cursor.execute(f"PRAGMA table_info({table[0]})")
+    columns = cursor.fetchall()
+    for col in columns:
+        print(f"    {col[1]} ({col[2]})")
+
+conn.close()
