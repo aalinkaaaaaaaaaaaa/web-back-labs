@@ -5,6 +5,7 @@ from os import path
 from dotenv import load_dotenv
 from db import db
 from db.models import User, Article
+from flask_login import LoginManager
 from lab1 import lab1
 from lab2 import lab2
 from lab3 import lab3
@@ -21,7 +22,6 @@ load_dotenv()
 app.secret_key = os.getenv('SECRET_KEY', 'default-secret-key')
 db_type = os.getenv('DB_TYPE', 'sqlite')
 
-# Настройка базы данных в зависимости от типа
 if db_type == 'postgres':
     db_user = os.getenv('DB_USER', 'alina_gevorkyan_orm')
     db_password = os.getenv('DB_PASSWORD', '123')
@@ -29,17 +29,22 @@ if db_type == 'postgres':
     db_name = os.getenv('DB_NAME', 'alina_gevorkyan_orm')
     app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}/{db_name}'
 else:
-    # Используем SQLite
     base_dir = path.dirname(path.abspath(__file__))
     db_path = path.join(base_dir, 'alina_gevorkyan_orm.db')
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Инициализация базы данных
 db.init_app(app)
 
-# Регистрация blueprint'ов
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'lab8.login'  
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
 app.register_blueprint(lab3)
@@ -47,7 +52,7 @@ app.register_blueprint(lab4)
 app.register_blueprint(lab5)
 app.register_blueprint(lab6)
 app.register_blueprint(lab7)
-app.register_blueprint(lab8)
+app.register_blueprint(lab8, url_prefix='/lab8')
 
 access_log = []
 
